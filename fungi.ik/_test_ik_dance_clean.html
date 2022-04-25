@@ -18,12 +18,12 @@ import Gltf					from "../fungi.misc/GLTF.js";
 App.useArmature = 3;
 App	.launch( onDraw, true )
 	.then( dl	=> dl
-		.addGrp( "shader", 
-			"../fungi/shaders/VecWColor.txt", 
-			"../fungi.armature/shaders/ArmaturePreview.txt", 
+		.addGrp( "shader",
+			"../fungi/shaders/VecWColor.txt",
+			"../fungi.armature/shaders/ArmaturePreview.txt",
 			"../fungi.armature/shaders/ArmatureSkinPhong.txt",
 		)
-		.addGLTF( "Mesh01", "../files/models/Vegeta", "ArmatureSkinPhong", ["Vegeta"], "Armature", true )
+		.addGLTF( "Mesh01", "../files/models/Vegeta.gltf", "ArmatureSkinPhong", ["Vegeta"], "Armature", true )
 		//.addGLTF( "Mesh01", "../dummy", "ArmatureSkinPhong", ["Base"], "CielArmature" )
 		.start() )
 	.then( ()	=> App.loadScene( true, true ) )
@@ -37,7 +37,7 @@ let gEntity, gRig, gDance;
 function onDraw(dt, ss){
 	gDance.update( dt, ss );
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	App.ecs.sys_run();
 }
 
@@ -46,7 +46,7 @@ function init(){
 	App.cache.getMaterial( "VecWColor" ).options.depthTest = false;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	let json = { 	
+	let json = {
 		leg_l: [ "LeftUpLeg","LeftLeg" ],
 		leg_r: [ "RightUpLeg","RightLeg" ],
 		arm_l: [ "LeftArm","LeftForeArm" ],
@@ -57,7 +57,7 @@ function init(){
 		hip:"Hips"
 	};
 
-	let jsonx = { 	
+	let jsonx = {
 		leg_l: [ "UpperLeg_L","LowerLeg_L" ],
 		leg_r: [ "UpperLeg_R","LowerLeg_R" ],
 		arm_l: [ "UpperArm_L","LowerArm_L" ],
@@ -75,7 +75,7 @@ function init(){
 
 	gDance = new IKRig_Human_Dance( gRig );
 	gDance.update( 0.03, 0.1 );
-	
+
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	App.loop.start();
@@ -92,13 +92,13 @@ class NoiseCycle{
 	}
 
 	reset(){ this.time = 0; return this; }
-	
-	update( dt = null ){ 
-		this.freqPos += this.freqPerSec * (dt || Fungi.deltaTime); 
+
+	update( dt = null ){
+		this.freqPos += this.freqPerSec * (dt || Fungi.deltaTime);
 		return this;
 	}
 
-	get( is01 = false, s = 1, a = 0 ){ 
+	get( is01 = false, s = 1, a = 0 ){
 		if( !is01 ) return this.func.get( this.freqPos * s + a );
 		return this.func.get( this.freqPos * s + a ) * 0.5 + 0.5;
 	}
@@ -214,7 +214,7 @@ class IKRig_Human_Dance{
 			//console.log("switch pivot foot");
 
 			Vec3.sub( mFoot, pFoot, this.f.stepDir ) 	// Get Direction of starting position between pivot and mover
-				.normalize()							
+				.normalize()
 				.scale( this.footDistance )				// Scale unit vector to use a vector length from pivot for mover.
 				.y = 0;									// We need 2D Direction, so zero out y.
 
@@ -226,12 +226,12 @@ class IKRig_Human_Dance{
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// MOVE FOOT
-		
+
 		// First Rotate the direction of where the foot needs to move to
 		this.f.stepDir.rotate( this.stepAngle * this.f.stepGradSm, "y", pmDir );
 
 		// Add Direction to pivot position to move the other foot on X,Z.
-		Vec3.add( pFoot, pmDir, this.f.stepPos );	
+		Vec3.add( pFoot, pmDir, this.f.stepPos );
 
 		// Y height is based on the Step Time. Remapping grad of 0->1 into 0->1->0
 		this.f.stepPos.y = Math.sin( this.f.stepGradSm * Math.PI ) * this.stepHeight;
@@ -253,19 +253,19 @@ class IKRig_Human_Dance{
 
 		Vec3.lerp( pFoot, this.f.stepPos, 0.5, pos );
 
-		pos.y = (this.hipHeight - this.hipMin) + this.hipMaxMove 
+		pos.y = (this.hipHeight - this.hipMin) + this.hipMaxMove
 					* ( Math.sin( this.f.stepGrad * Maths.PI_2 * 2 ) * 0.5 + 0.5 );
 
 		//pos.y = this.hipHeight - this.hipMin;
 
 		//TODO another additive of noise might improve things on pos.y;
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Figure out Forward Direction to create rotation
 		// - First we need direction between the two feet, Set y to zero since we need 2D Direction
 		// - Since the pivot foot changes, the direction changes, so need change rotation based on which foot is the piviot
 		// -- The idea is that if the direction is Left or Right, by rotating +/- 90 degrees would make it forward
-		let dir = Vec3.sub( this.f.stepPos, pFoot )			
+		let dir = Vec3.sub( this.f.stepPos, pFoot )
 					.set( null, 0 )
 					.rotate( ( this.f.pivotIdx == 0 )? Maths.PI_H : -Maths.PI_H, "y" )
 					.normalize(),
@@ -393,7 +393,7 @@ class IKRig_Human_Dance{
 		if( this.target.distanceSqr < this.rig.leg_l.lenSqr ){
 			limb( this.rig.leg_l, this.target, this.rig.pose, wt );
 		}else{
-			//aim2( rig.leg_l, target, null, wt );	
+			//aim2( rig.leg_l, target, null, wt );
 			console.log("TODO AIM");
 		}
 		*/
